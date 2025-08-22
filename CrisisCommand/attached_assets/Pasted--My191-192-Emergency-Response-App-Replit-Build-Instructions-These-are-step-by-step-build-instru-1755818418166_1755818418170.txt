@@ -1,0 +1,175 @@
+
+# My191&192 Emergency Response App – Replit Build Instructions
+
+These are step-by-step build instructions for Replit AI to follow when generating the codebase for the My191&192 cross-platform app (Ghana emergency services platform).
+
+---
+## 1. Project Setup
+- Use **React Native (Expo)** for mobile app (Android + iOS).
+- Use **Next.js** (React + TypeScript) for the web portal and dashboards.
+- Use **Node.js (Express + TypeScript)** for backend microservices.
+- Use **PostgreSQL** (with PostGIS for geospatial data) as primary DB.
+- Use **Redis** for caching and real-time event queues.
+- Use **WebSockets** (Socket.IO) for live chat and dispatcher-citizen updates.
+- Use **Docker + Docker Compose** for local dev orchestration.
+
+---
+## 2. Ghana Emergency Numbers
+The app should include **all official Ghana emergency numbers** for quick access:
+- **191** – Police Service
+- **192** – Fire Service
+- **193** – Ambulance Service
+- **112** – Unified emergency hotline (Police, Fire, Ambulance)
+- **999** – General emergency (legacy, optional fallback)
+- **311** – NADMO (National Disaster Management Organization)
+- **18555** – Ghana National Road Safety Authority (accident hotline)
+- **211** – Ghana Water Company emergency line (utility)
+- **0302 221 152** – Electricity Company of Ghana (faults/emergencies)
+
+> In-app, prioritize **191** – Police Service
+- **192** – Fire Service
+- **193** – Ambulance Service
+- **112** – Unified emergency hotline (Police, Fire, Ambulance)
+(unified line), but keep others available in the UI for redundancy.
+
+---
+## 3. Codebase Structure
+```
+/app
+  /mobile (React Native - Expo)
+  /web (Next.js web portal + dashboard)
+  /backend (Node.js Express microservices)
+  /shared (TypeScript utils, constants, types)
+  docker-compose.yml
+  README.md
+```
+- Keep shared types (incident schema, user roles, location models) inside `/shared`.
+- Use **monorepo setup** with Turborepo or Nx.
+
+---
+## 4. Mobile App (Citizen)
+- Features:
+  - One-tap SOS (Police, Fire, Ambulance, NADMO).
+  - Silent/stealth SOS mode.
+  - GPS capture (fall back to cell-ID).
+  - Convert GPS to **GhanaPostGPS** digital address (use API).
+  - Guided incident categories (form wizard).
+  - Media capture (photo, video, audio).
+  - Real-time chat with dispatcher.
+  - Multilingual support (English, Akan/Twi, Ewe, Ga, Dagbani).
+  - Offline queueing of incidents (send when network resumes).
+- Libraries:
+  - `expo-location`, `react-native-maps`, `expo-camera`, `expo-av`.
+  - `i18next` for localization.
+  - `react-query` for data sync.
+
+---
+## 5. Web Portal (Citizens + Non-Emergency Reports)
+- Next.js frontend.
+- Features:
+  - Non-emergency reporting form.
+  - File/evidence upload.
+  - Status check of incidents.
+  - Login with phone number (OTP-based).
+
+---
+## 6. Dispatcher Console (CAD-lite)
+- Web-based (Next.js).
+- Features:
+  - Unified incident intake queue (mobile, web, USSD, SMS).
+  - Map-based visualization with GPS + GhanaPostGPS overlay.
+  - SOP-driven triage prompts.
+  - Automated priority scoring.
+  - One-click escalation to Ambulance (193) or NADMO (311).
+  - Integrated chat bridging with citizens.
+  - Secure audit log of all actions.
+- Libraries:
+  - `leaflet` or `mapbox-gl` for GIS.
+  - `socket.io-client` for real-time updates.
+
+---
+## 7. Responder App (Field Units)
+- Mobile app (React Native, separate login).
+- Features:
+  - Unit assignment + dispatch notification.
+  - Navigation (Google Maps/OSM) + hydrant overlay for fire units.
+  - Status update workflow (en route, on scene, cleared).
+  - Incident closure forms + media upload.
+  - Secure login with device attestation.
+
+---
+## 8. Backend (Microservices)
+- Services:
+  1. **Auth Service** (OTP, JWT, RBAC).
+  2. **Incident Service** (create, update, track incidents).
+  3. **Location Service** (GPS + GhanaPostGPS conversion).
+  4. **Media Service** (uploads to object storage, e.g., S3-compatible).
+  5. **Chat Service** (WebSocket-based).
+  6. **Analytics Service** (KPIs, dashboards).
+- Security:
+  - TLS 1.2+, AES-256 at rest.
+  - Role-based access control (citizen, dispatcher, responder, admin).
+  - Audit logging with immutability.
+- APIs:
+  - REST + GraphQL for flexibility.
+  - WebSockets for real-time.
+
+---
+## 9. USSD + SMS Channels
+- Integrate with telco aggregator API.
+- Features:
+  - Basic reporting (USSD menu).
+  - SMS tips and status queries.
+- Fallback mode for low-connectivity.
+
+---
+## 10. Analytics Dashboard
+- Built into web portal.
+- KPIs:
+  - Dispatch times, location accuracy, false alarms, workload trends, hotspot mapping.
+- Use **Chart.js** or **Recharts** for visualization.
+
+---
+## 11. DevOps + Deployment
+- Use Docker + Kubernetes (future scale-up).
+- Hosting: NITA GovCloud (or AWS local region if approved).
+- CI/CD: GitHub Actions or Replit Deploy.
+- Monitoring: Prometheus + Grafana, Elastic (ELK) stack for logs.
+- Disaster recovery: automated DB + media backups.
+
+---
+## 12. Compliance
+- Implement Ghana Data Protection Act (Act 843) controls:
+  - Data minimization.
+  - Retention schedules.
+  - Breach notification logging.
+- WCAG accessibility compliance.
+
+---
+## 13. Advanced Features (Future)
+- AI-based false alarm detection (analyze media/text patterns).
+- Push notifications for mass alerts (public warnings, NADMO).
+- Facial + plate recognition integration (long-term).
+- Drone/UAV integration for aerial incident feeds (pilot phase 2).
+
+---
+## 14. Build Order (MVP → Full)
+1. Backend auth + incident microservices.
+2. Android app (SOS button, GPS, GhanaPostGPS, media upload).
+3. Dispatcher console (intake, map view, chat).
+4. Pilot launch in Accra + Ashanti.
+5. Add USSD/SMS fallback + iOS parity.
+6. Add responder app + analytics dashboards.
+7. Optimize + scale.
+
+---
+## 15. Notes for Replit AI
+- Generate **clean, modular code** with comments.
+- Prioritize MVP first: Android citizen app + dispatcher console + core backend.
+- Use `.env` for secrets and config.
+- Provide seed scripts for DB migrations.
+- Use GhanaPostGPS API sandbox for testing.
+- Keep UI clean, modern, and mobile-first with TailwindCSS (web).
+
+---
+END OF FILE

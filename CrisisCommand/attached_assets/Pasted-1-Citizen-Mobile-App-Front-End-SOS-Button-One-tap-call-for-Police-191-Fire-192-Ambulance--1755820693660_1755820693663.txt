@@ -1,0 +1,110 @@
+1. Citizen Mobile App (Front-End)
+
+SOS Button: One-tap call for Police (191), Fire (192), Ambulance (193), or Unified 112.
+
+Silent/Stealth Mode: For discreet alerts.
+
+GPS + GhanaPostGPS Integration: Auto-detect user’s precise location.
+
+Photo/Video Upload: Citizens can send incident evidence.
+
+Real-time Chat: Direct chat with dispatcher/assigned responder.
+
+Multilingual Support: English + Akan/Twi, Ewe, Ga, Dagbani. User can select preferred language from settings or first launch.
+
+Offline Mode: Queue incident reports until data is available.
+
+Incident Categories: Guided prompts (e.g., Accident, Fire, Robbery).
+
+2. User Roles (Separation of Views)
+
+Citizens (Mobile App)
+
+Can send SOS, media, chat, and track status.
+
+No dispatcher/admin view.
+
+Unit Dashboards (Web + Mobile)
+Each emergency service (Police, Fire, Ambulance, NADMO, etc.) has its own dashboard.
+
+Login Page: Each service unit logs in separately.
+
+Unit Dashboard Features:
+
+Assigned tasks list (with status: new, en route, resolved).
+
+Real-time map with assigned incident locations.
+
+Task details with media + chat support.
+
+History of past assignments.
+
+Unit Super Admin (per service)
+
+Each emergency service has its own Super Admin (Police Admin, Fire Admin, Ambulance Admin, etc.).
+
+Capabilities:
+
+Add/remove staff accounts.
+
+Assign incidents to specific responders.
+
+Update incident status.
+
+Edit responder details and availability.
+
+Monitor performance (task times, completion rates).
+
+Send announcements/messages to unit members.
+
+3. Inter-Unit Communication Platform
+
+Each service (Police, Fire, Ambulance, NADMO, etc.) has its own internal communication channel.
+
+Message/Task Delivery:
+
+Admin can send messages or assign incidents directly to responders.
+
+Responders receive real-time notifications.
+
+Responders update status (Accepted, En Route, On Scene, Completed).
+
+Audit Logging: Every assignment, update, and message is logged.
+
+4. Super Admin (Global Governance)
+
+For the Ministry of Interior / National Coordinator.
+
+Can oversee all unit dashboards (Police, Fire, Ambulance, NADMO).
+
+Can pull analytics (response time, incident hotspots, workload distribution).
+
+Cannot micromanage unit assignments (that’s for service-level super admins).
+
+Provides nationwide reporting & monitoring.
+
+5. System Flow Example
+
+Citizen triggers SOS (Police).
+
+Dispatcher/Admin at Police unit dashboard sees new case.
+
+Police Super Admin assigns case to available unit (responder).
+
+Responder gets notification → accepts → navigates to location.
+
+Updates status at each stage.
+
+Incident closure recorded in logs.
+
+Analytics go to Global Super Admin dashboard.
+
+👉 With this setup:
+
+Citizens only see their mobile SOS app.
+
+Each emergency service works independently with its own dashboard + super admin.
+
+There’s a global super admin for oversight (no direct control of unit tasks).
+
+Language support ensures accessibility across Ghana.

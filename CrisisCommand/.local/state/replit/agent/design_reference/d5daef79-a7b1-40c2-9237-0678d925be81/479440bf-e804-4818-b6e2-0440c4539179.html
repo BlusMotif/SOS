@@ -1,0 +1,675 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My191&192 - Ghana Emergency Response Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'roboto': ['Roboto', 'sans-serif'],
+                    },
+                    colors: {
+                        'emergency-red': '#D32F2F',
+                        'trust-blue': '#1976D2',
+                        'safe-green': '#388E3C',
+                        'alert-orange': '#F57C00',
+                        'ghana-gold': '#FFD700',
+                        'ghana-green': '#006B3F',
+                        'ghana-red': '#CE1126'
+                    },
+                    spacing: {
+                        '18': '4.5rem',
+                        '88': '22rem',
+                        '112': '28rem'
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .pulse-emergency {
+            animation: pulse-emergency 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse-emergency {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+        
+        .incident-status-new { border-left: 4px solid #F57C00; }
+        .incident-status-assigned { border-left: 4px solid #1976D2; }
+        .incident-status-resolved { border-left: 4px solid #388E3C; }
+        
+        .chat-bubble-user {
+            background: #E3F2FD;
+            border-radius: 18px 18px 4px 18px;
+        }
+        
+        .chat-bubble-dispatcher {
+            background: #F3E5F5;
+            border-radius: 18px 18px 18px 4px;
+        }
+    </style>
+</head>
+<body class="font-roboto bg-gray-50 text-gray-900">
+    <!-- @COMPONENT: AppNavigation [role, activeView] -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-ghana-red via-ghana-gold to-ghana-green rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">My191&192</h1>
+                        <p class="text-xs text-gray-500">Ghana Emergency Response</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Language Selector -->
+                    <select class="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white" data-bind="currentLanguage">
+                        <option value="en">English</option>
+                        <option value="tw">Akan/Twi</option>
+                        <option value="ee">Ewe</option>
+                        <option value="ga">Ga</option>
+                        <option value="dag">Dagbani</option>
+                    </select>
+                    
+                    <!-- Role Switcher (Demo) -->
+                    <div class="flex bg-gray-100 rounded-lg p-1">
+                        <button class="px-3 py-1 text-sm font-medium rounded-md bg-white text-trust-blue shadow-sm" data-event="click:switchToPublic">
+                            Citizen
+                        </button>
+                        <button class="px-3 py-1 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700" data-event="click:switchToDispatcher">
+                            Dispatcher
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: AppNavigation -->
+
+    <!-- Main Content Area -->
+    <div class="max-w-7xl mx-auto">
+        
+        <!-- @COMPONENT: CitizenEmergencyInterface [userLocation, emergencyContacts] -->
+        <div id="citizen-view" class="block">
+            <!-- Emergency SOS Section -->
+            <div class="bg-white shadow-lg rounded-lg m-4 p-6">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Emergency Services</h2>
+                    <p class="text-gray-600">Tap for immediate emergency response</p>
+                    <div class="flex items-center justify-center mt-2 text-sm text-gray-500">
+                        <i class="fas fa-map-marker-alt mr-1"></i>
+                        <span data-bind="userLocation.address">Location: Accra, Greater Accra Region</span>
+                        <span class="ml-2 text-safe-green" data-bind="locationAccuracy">
+                            <i class="fas fa-check-circle"></i> GPS Active
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Primary Emergency Buttons -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <button class="bg-emergency-red hover:bg-red-700 text-white p-6 rounded-xl shadow-lg pulse-emergency transform transition-transform duration-200 hover:scale-105" 
+                            data-event="click:emergencySOS" data-service="police" data-number="191">
+                        <i class="fas fa-shield-alt text-3xl mb-2"></i>
+                        <div class="font-bold text-lg">POLICE</div>
+                        <div class="text-sm opacity-90">191</div>
+                    </button>
+                    
+                    <button class="bg-emergency-red hover:bg-red-700 text-white p-6 rounded-xl shadow-lg pulse-emergency transform transition-transform duration-200 hover:scale-105" 
+                            data-event="click:emergencySOS" data-service="fire" data-number="192">
+                        <i class="fas fa-fire-extinguisher text-3xl mb-2"></i>
+                        <div class="font-bold text-lg">FIRE</div>
+                        <div class="text-sm opacity-90">192</div>
+                    </button>
+                    
+                    <button class="bg-emergency-red hover:bg-red-700 text-white p-6 rounded-xl shadow-lg pulse-emergency transform transition-transform duration-200 hover:scale-105" 
+                            data-event="click:emergencySOS" data-service="ambulance" data-number="193">
+                        <i class="fas fa-ambulance text-3xl mb-2"></i>
+                        <div class="font-bold text-lg">AMBULANCE</div>
+                        <div class="text-sm opacity-90">193</div>
+                    </button>
+                    
+                    <button class="bg-trust-blue hover:bg-blue-700 text-white p-6 rounded-xl shadow-lg transform transition-transform duration-200 hover:scale-105" 
+                            data-event="click:emergencySOS" data-service="unified" data-number="112">
+                        <i class="fas fa-phone text-3xl mb-2"></i>
+                        <div class="font-bold text-lg">UNIFIED</div>
+                        <div class="text-sm opacity-90">112</div>
+                    </button>
+                </div>
+
+                <!-- Silent SOS Option -->
+                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-medium text-gray-900">Silent Emergency Mode</h3>
+                            <p class="text-sm text-gray-600">Send location without calling</p>
+                        </div>
+                        <button class="bg-alert-orange hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium" data-event="click:silentSOS">
+                            <i class="fas fa-volume-mute mr-2"></i>Silent SOS
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Additional Emergency Contacts -->
+                <div class="border-t pt-4">
+                    <h3 class="font-medium text-gray-900 mb-3">Other Emergency Services</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <a href="tel:311" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-exclamation-triangle text-alert-orange mr-3"></i>
+                            <div>
+                                <div class="font-medium">NADMO</div>
+                                <div class="text-sm text-gray-600">311</div>
+                            </div>
+                        </a>
+                        <a href="tel:18555" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-car-crash text-alert-orange mr-3"></i>
+                            <div>
+                                <div class="font-medium">Road Safety</div>
+                                <div class="text-sm text-gray-600">18555</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Incidents -->
+            <div class="bg-white shadow rounded-lg m-4 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Your Recent Reports</h3>
+                <!-- @MAP: userIncidents.map(incident => ( -->
+                <div class="incident-status-resolved bg-gray-50 rounded-lg p-4 mb-3">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <div class="flex items-center mb-2">
+                                <span class="bg-safe-green text-white text-xs font-medium px-2 py-1 rounded-full">RESOLVED</span>
+                                <span class="ml-2 text-sm text-gray-600" data-bind="incident.timestamp">2 hours ago</span>
+                            </div>
+                            <p class="text-gray-900 font-medium" data-bind="incident.type">Traffic Accident Report</p>
+                            <p class="text-sm text-gray-600" data-bind="incident.location">Kwame Nkrumah Circle, Accra</p>
+                        </div>
+                        <button class="text-trust-blue hover:text-blue-700" data-event="click:viewIncident" data-incident-id="12345">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- @END_MAP )) -->
+                
+                <div class="incident-status-assigned bg-gray-50 rounded-lg p-4">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <div class="flex items-center mb-2">
+                                <span class="bg-trust-blue text-white text-xs font-medium px-2 py-1 rounded-full">IN PROGRESS</span>
+                                <span class="ml-2 text-sm text-gray-600" data-bind="incident.timestamp">15 minutes ago</span>
+                            </div>
+                            <p class="text-gray-900 font-medium" data-bind="incident.type">Medical Emergency</p>
+                            <p class="text-sm text-gray-600" data-bind="incident.location">East Legon, Accra</p>
+                            <div class="mt-2 flex items-center text-sm text-trust-blue">
+                                <i class="fas fa-ambulance mr-1"></i>
+                                <span>Ambulance dispatched - ETA 8 minutes</span>
+                            </div>
+                        </div>
+                        <button class="text-trust-blue hover:text-blue-700" data-event="click:openChat" data-incident-id="12346">
+                            <i class="fas fa-comments"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: CitizenEmergencyInterface -->
+
+        <!-- @COMPONENT: DispatcherConsole [incidents, responders, mapData] -->
+        <div id="dispatcher-view" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-4">
+                
+                <!-- Incident Queue -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white shadow rounded-lg p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold text-gray-900">Active Incidents</h2>
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-emergency-red text-white text-xs font-bold px-2 py-1 rounded-full" data-bind="urgentCount">3</span>
+                                <span class="text-sm text-gray-600">Urgent</span>
+                            </div>
+                        </div>
+
+                        <!-- Incident Cards -->
+                        <!-- @MAP: activeIncidents.map(incident => ( -->
+                        <div class="incident-status-new bg-white border rounded-lg p-4 mb-4 hover:shadow-md transition-shadow">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-emergency-red rounded-full flex items-center justify-center">
+                                        <i class="fas fa-shield-alt text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-900" data-bind="incident.type">Armed Robbery in Progress</h3>
+                                        <p class="text-sm text-gray-600" data-bind="incident.reporter">Reported by: Kwame A. (+233 24 XXX XXXX)</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="bg-emergency-red text-white text-xs font-bold px-2 py-1 rounded-full">HIGH</span>
+                                    <p class="text-xs text-gray-500 mt-1" data-bind="incident.timestamp">2 min ago</p>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4 mb-3 text-sm">
+                                <div>
+                                    <span class="text-gray-600">Location:</span>
+                                    <p class="font-medium" data-bind="incident.location">Osu Oxford Street, Accra</p>
+                                    <p class="text-xs text-gray-500" data-bind="incident.gpsAddress">GA-020-4567</p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">Service:</span>
+                                    <p class="font-medium text-emergency-red">Police (191)</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <div class="flex space-x-2">
+                                    <button class="bg-trust-blue hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium" data-event="click:assignIncident" data-incident-id="001">
+                                        <i class="fas fa-user-plus mr-1"></i>Assign Unit
+                                    </button>
+                                    <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm font-medium" data-event="click:openMap" data-incident-id="001">
+                                        <i class="fas fa-map-marker-alt mr-1"></i>View Map
+                                    </button>
+                                </div>
+                                <button class="text-trust-blue hover:text-blue-700" data-event="click:openDispatcherChat" data-incident-id="001">
+                                    <i class="fas fa-comments"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+
+                        <div class="incident-status-assigned bg-white border rounded-lg p-4 mb-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-emergency-red rounded-full flex items-center justify-center">
+                                        <i class="fas fa-fire text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-900" data-bind="incident.type">House Fire</h3>
+                                        <p class="text-sm text-gray-600" data-bind="incident.reporter">Reported by: Ama B. (+233 55 XXX XXXX)</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="bg-emergency-red text-white text-xs font-bold px-2 py-1 rounded-full">HIGH</span>
+                                    <p class="text-xs text-gray-500 mt-1" data-bind="incident.timestamp">5 min ago</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-50 border border-blue-200 rounded p-3 mb-3">
+                                <div class="flex items-center text-trust-blue text-sm">
+                                    <i class="fas fa-fire-extinguisher mr-2"></i>
+                                    <span class="font-medium">Fire Unit 192-A dispatched</span>
+                                </div>
+                                <p class="text-xs text-gray-600 mt-1">ETA: 4 minutes • Officer: Captain Mensah</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4 mb-3 text-sm">
+                                <div>
+                                    <span class="text-gray-600">Location:</span>
+                                    <p class="font-medium" data-bind="incident.location">Dansoman Estate, Accra</p>
+                                    <p class="text-xs text-gray-500" data-bind="incident.gpsAddress">GA-115-7890</p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">Service:</span>
+                                    <p class="font-medium text-emergency-red">Fire Service (192)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="space-y-6">
+                    <!-- Quick Stats -->
+                    <div class="bg-white shadow rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Dashboard</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Active Incidents</span>
+                                <span class="font-bold text-xl text-emergency-red" data-bind="stats.activeIncidents">12</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Response Time Avg</span>
+                                <span class="font-bold text-xl text-trust-blue" data-bind="stats.avgResponseTime">6.2m</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Units Available</span>
+                                <span class="font-bold text-xl text-safe-green" data-bind="stats.availableUnits">8</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Today's Total</span>
+                                <span class="font-bold text-xl text-gray-700" data-bind="stats.todayTotal">47</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Available Units -->
+                    <div class="bg-white shadow rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Available Units</h3>
+                        <div class="space-y-3">
+                            <!-- @MAP: availableUnits.map(unit => ( -->
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-safe-green rounded-full flex items-center justify-center">
+                                        <i class="fas fa-shield-alt text-white text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-sm" data-bind="unit.callSign">Police-191-A</p>
+                                        <p class="text-xs text-gray-600" data-bind="unit.location">Tema Station</p>
+                                    </div>
+                                </div>
+                                <span class="bg-safe-green text-white text-xs px-2 py-1 rounded-full">Available</span>
+                            </div>
+                            <!-- @END_MAP )) -->
+                            
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-safe-green rounded-full flex items-center justify-center">
+                                        <i class="fas fa-ambulance text-white text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-sm" data-bind="unit.callSign">AMB-193-B</p>
+                                        <p class="text-xs text-gray-600" data-bind="unit.location">Ridge Hospital</p>
+                                    </div>
+                                </div>
+                                <span class="bg-safe-green text-white text-xs px-2 py-1 rounded-full">Available</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-alert-orange rounded-full flex items-center justify-center">
+                                        <i class="fas fa-fire-extinguisher text-white text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-sm" data-bind="unit.callSign">FIRE-192-A</p>
+                                        <p class="text-xs text-gray-600" data-bind="unit.location">En Route</p>
+                                    </div>
+                                </div>
+                                <span class="bg-alert-orange text-white text-xs px-2 py-1 rounded-full">Busy</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white shadow rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                        <div class="space-y-2">
+                            <button class="w-full bg-trust-blue hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium" data-event="click:createIncident">
+                                <i class="fas fa-plus mr-2"></i>Create Incident
+                            </button>
+                            <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg text-sm font-medium" data-event="click:viewMap">
+                                <i class="fas fa-map mr-2"></i>View Map
+                            </button>
+                            <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg text-sm font-medium" data-event="click:viewReports">
+                                <i class="fas fa-chart-bar mr-2"></i>View Reports
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: DispatcherConsole -->
+    </div>
+
+    <!-- @COMPONENT: LiveChatModal [isOpen, currentIncident, messages] -->
+    <!-- @STATE: chatOpen:boolean = false -->
+    <div id="chat-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Live Chat - Incident #12346</h3>
+                        <button class="text-gray-400 hover:text-gray-600" data-event="click:closeChatModal">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Chat Messages -->
+                    <div class="h-88 overflow-y-auto space-y-3 mb-4" data-mock="true">
+                        <div class="flex">
+                            <div class="chat-bubble-dispatcher max-w-xs px-4 py-2">
+                                <p class="text-sm">Hello, this is dispatcher Sarah. I've received your medical emergency report. Can you confirm your exact location?</p>
+                                <p class="text-xs text-gray-500 mt-1">2:34 PM</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end">
+                            <div class="chat-bubble-user max-w-xs px-4 py-2">
+                                <p class="text-sm">Yes, I'm at East Legon Community Center. My father collapsed and is having difficulty breathing.</p>
+                                <p class="text-xs text-gray-500 mt-1 text-right">2:35 PM</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="chat-bubble-dispatcher max-w-xs px-4 py-2">
+                                <p class="text-sm">Ambulance 193-B has been dispatched to your location. ETA is 8 minutes. Please stay calm and ensure the patient is in a comfortable position.</p>
+                                <p class="text-xs text-gray-500 mt-1">2:36 PM</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end">
+                            <div class="chat-bubble-user max-w-xs px-4 py-2">
+                                <p class="text-sm">Thank you. Should I try to give him water?</p>
+                                <p class="text-xs text-gray-500 mt-1 text-right">2:37 PM</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="chat-bubble-dispatcher max-w-xs px-4 py-2">
+                                <p class="text-sm">No, please don't give him anything to drink. Keep his airway clear and monitor his breathing. The ambulance is 4 minutes away now.</p>
+                                <p class="text-xs text-gray-500 mt-1">2:38 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Input -->
+                    <div class="flex space-x-2">
+                        <input type="text" placeholder="Type your message..." 
+                               class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-trust-blue focus:border-transparent"
+                               data-bind="chatMessage">
+                        <button class="bg-trust-blue hover:bg-blue-700 text-white px-4 py-2 rounded-lg" data-event="click:sendChatMessage">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: LiveChatModal -->
+
+    <!-- @COMPONENT: MediaUploadModal [isOpen, incidentId] -->
+    <div id="media-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Upload Evidence</h3>
+                        <button class="text-gray-400 hover:text-gray-600" data-event="click:closeMediaModal">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- File Upload Area -->
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors" data-implementation="Implement drag-and-drop file upload">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-sm text-gray-600">Drag and drop files here, or click to select</p>
+                            <input type="file" multiple accept="image/*,video/*,audio/*" class="hidden" data-event="change:handleFileUpload">
+                        </div>
+                        
+                        <!-- Upload Options -->
+                        <div class="grid grid-cols-3 gap-3">
+                            <button class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-center" data-event="click:capturePhoto">
+                                <i class="fas fa-camera text-xl text-gray-600 mb-2"></i>
+                                <p class="text-xs text-gray-600">Photo</p>
+                            </button>
+                            <button class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-center" data-event="click:captureVideo">
+                                <i class="fas fa-video text-xl text-gray-600 mb-2"></i>
+                                <p class="text-xs text-gray-600">Video</p>
+                            </button>
+                            <button class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-center" data-event="click:captureAudio">
+                                <i class="fas fa-microphone text-xl text-gray-600 mb-2"></i>
+                                <p class="text-xs text-gray-600">Audio</p>
+                            </button>
+                        </div>
+                        
+                        <div class="flex space-x-3">
+                            <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg" data-event="click:closeMediaModal">
+                                Cancel
+                            </button>
+                            <button class="flex-1 bg-trust-blue hover:bg-blue-700 text-white py-2 px-4 rounded-lg" data-event="click:uploadMedia">
+                                Upload
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: MediaUploadModal -->
+
+    <!-- Emergency Action Confirmation Modal -->
+    <div id="emergency-confirm-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-emergency-red rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">Emergency SOS Activated</h3>
+                        <p class="text-sm text-gray-600 mb-6">Your location has been sent to emergency services. Help is on the way.</p>
+                        
+                        <div class="space-y-3">
+                            <button class="w-full bg-trust-blue hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium" data-event="click:openChatFromSOS">
+                                <i class="fas fa-comments mr-2"></i>Chat with Dispatcher
+                            </button>
+                            <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-medium" data-event="click:addEvidence">
+                                <i class="fas fa-camera mr-2"></i>Add Photos/Video
+                            </button>
+                            <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg" data-event="click:closeEmergencyModal">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // TODO: Implement Firebase Realtime Database integration
+        // TODO: Implement geolocation API for GPS coordinates  
+        // TODO: Implement WebSocket connections for real-time chat
+        // TODO: Implement user authentication and role management
+        // TODO: Implement file upload and media capture functionality
+        
+        (function() {
+            // Demo UI state management
+            let currentView = 'citizen';
+            let isEmergencyModalOpen = false;
+            let isChatModalOpen = false;
+            let isMediaModalOpen = false;
+
+            // View switching
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('[data-event="click:switchToPublic"]')) {
+                    currentView = 'citizen';
+                    document.getElementById('citizen-view').classList.remove('hidden');
+                    document.getElementById('dispatcher-view').classList.add('hidden');
+                    e.target.classList.add('bg-white', 'text-trust-blue', 'shadow-sm');
+                    e.target.classList.remove('text-gray-500');
+                    e.target.nextElementSibling.classList.remove('bg-white', 'text-trust-blue', 'shadow-sm');
+                    e.target.nextElementSibling.classList.add('text-gray-500');
+                }
+                
+                if (e.target.closest('[data-event="click:switchToDispatcher"]')) {
+                    currentView = 'dispatcher';
+                    document.getElementById('citizen-view').classList.add('hidden');
+                    document.getElementById('dispatcher-view').classList.remove('hidden');
+                    e.target.classList.add('bg-white', 'text-trust-blue', 'shadow-sm');
+                    e.target.classList.remove('text-gray-500');
+                    e.target.previousElementSibling.classList.remove('bg-white', 'text-trust-blue', 'shadow-sm');
+                    e.target.previousElementSibling.classList.add('text-gray-500');
+                }
+
+                // Emergency SOS handlers
+                if (e.target.closest('[data-event="click:emergencySOS"]')) {
+                    const service = e.target.closest('[data-service]').getAttribute('data-service');
+                    const number = e.target.closest('[data-number]').getAttribute('data-number');
+                    console.log(`Emergency SOS activated: ${service} (${number})`);
+                    document.getElementById('emergency-confirm-modal').classList.remove('hidden');
+                }
+
+                // Modal handlers
+                if (e.target.closest('[data-event="click:openChat"]') || e.target.closest('[data-event="click:openDispatcherChat"]') || e.target.closest('[data-event="click:openChatFromSOS"]')) {
+                    document.getElementById('chat-modal').classList.remove('hidden');
+                }
+
+                if (e.target.closest('[data-event="click:closeChatModal"]')) {
+                    document.getElementById('chat-modal').classList.add('hidden');
+                }
+
+                if (e.target.closest('[data-event="click:addEvidence"]')) {
+                    document.getElementById('media-modal').classList.remove('hidden');
+                }
+
+                if (e.target.closest('[data-event="click:closeMediaModal"]')) {
+                    document.getElementById('media-modal').classList.add('hidden');
+                }
+
+                if (e.target.closest('[data-event="click:closeEmergencyModal"]')) {
+                    document.getElementById('emergency-confirm-modal').classList.add('hidden');
+                }
+
+                // Silent SOS
+                if (e.target.closest('[data-event="click:silentSOS"]')) {
+                    console.log('Silent SOS activated');
+                    alert('Silent emergency alert sent to emergency services with your location.');
+                }
+            });
+
+            // Simulate real-time updates
+            setInterval(() => {
+                // TODO: Replace with actual Firebase listeners
+                console.log('Checking for real-time updates...');
+            }, 5000);
+
+            // Initialize GPS location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        console.log('GPS coordinates:', position.coords.latitude, position.coords.longitude);
+                        // TODO: Convert to GhanaPostGPS address using API
+                    },
+                    (error) => {
+                        console.warn('GPS access denied or unavailable');
+                        // TODO: Implement fallback to cell-ID location
+                    }
+                );
+            }
+        })();
+    </script>
+</body>
+</html>
